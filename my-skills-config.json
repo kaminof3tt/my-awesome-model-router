@@ -1,0 +1,131 @@
+{
+  "$schema": "https://raw.githubusercontent.com/your-username/your-repo/main/schema.json",
+  "version": "1.0.0",
+  "name": "my-skills-plugin",
+  "description": "Custom skills plugin with role-based model selection",
+  
+  "modelProviders": {
+    "k2.5": "volcengine-plan/kimi-k2.5",
+    "glm5": "volcengine-plan/glm-5",
+    "deepseekv3.2": "baiduqianfancodingplan/deepseek-v3.2",
+    "m2.7": "minimax-cn-coding-plan/MiniMax-M2.7"
+  },
+  
+  "agents": {
+    "frontend": {
+      "model": "k2.5",
+      "skills": ["frontend-developer"],
+      "description": "Frontend development specialist"
+    },
+    "architect": {
+      "model": "k2.5",
+      "skills": ["architect"],
+      "description": "System architecture and design specialist"
+    },
+    "backend": {
+      "model": "glm5",
+      "skills": ["backend-developer"],
+      "description": "Backend development specialist"
+    },
+    "tester": {
+      "model": "deepseekv3.2",
+      "skills": ["tester"],
+      "description": "Testing and quality assurance specialist"
+    },
+    "qa": {
+      "model": "deepseekv3.2",
+      "skills": ["qa-engineer"],
+      "description": "Quality assurance and process improvement specialist"
+    }
+  },
+  
+  "categories": {
+    "frontend-architecture": {
+      "model": "k2.5",
+      "description": "Frontend and architecture tasks",
+      "agents": ["frontend", "architect"]
+    },
+    "requirement-implementation": {
+      "model": "glm5",
+      "description": "Feature implementation and requirement fulfillment",
+      "agents": ["backend", "frontend"]
+    },
+    "bug-fix": {
+      "model": "deepseekv3.2",
+      "description": "Bug investigation and fixing",
+      "agents": ["tester", "qa", "backend"]
+    },
+    "low-difficulty": {
+      "model": "m2.7",
+      "description": "Simple, repetitive tasks",
+      "agents": ["frontend", "backend", "tester"]
+    },
+    "fallback": {
+      "model": "m2.7",
+      "description": "Default fallback for unspecified tasks",
+      "agents": ["frontend", "backend", "tester", "qa"]
+    }
+  },
+  
+  "taskTypes": {
+    "ui-component": {
+      "category": "frontend-architecture",
+      "model": "k2.5"
+    },
+    "api-design": {
+      "category": "frontend-architecture",
+      "model": "k2.5"
+    },
+    "feature-implementation": {
+      "category": "requirement-implementation",
+      "model": "glm5"
+    },
+    "bug-investigation": {
+      "category": "bug-fix",
+      "model": "deepseekv3.2"
+    },
+    "unit-test": {
+      "category": "low-difficulty",
+      "model": "m2.7"
+    },
+    "documentation": {
+      "category": "low-difficulty",
+      "model": "m2.7"
+    }
+  },
+  
+  "modelSelection": {
+    "rules": [
+      {
+        "condition": "task contains 'frontend' OR task contains 'UI' OR task contains 'component'",
+        "model": "k2.5",
+        "priority": 10
+      },
+      {
+        "condition": "task contains 'architecture' OR task contains 'design' OR task contains 'system'",
+        "model": "k2.5",
+        "priority": 10
+      },
+      {
+        "condition": "task contains 'implement' OR task contains 'feature' OR task contains 'requirement'",
+        "model": "glm5",
+        "priority": 8
+      },
+      {
+        "condition": "task contains 'bug' OR task contains 'fix' OR task contains 'error'",
+        "model": "deepseekv3.2",
+        "priority": 9
+      },
+      {
+        "condition": "task contains 'test' OR task contains 'simple' OR task contains 'routine'",
+        "model": "m2.7",
+        "priority": 5
+      },
+      {
+        "condition": "default",
+        "model": "m2.7",
+        "priority": 1
+      }
+    ]
+  }
+}

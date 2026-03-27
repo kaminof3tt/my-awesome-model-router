@@ -1,0 +1,40 @@
+{
+  "name": "my-skills-plugin",
+  "version": "1.0.0",
+  "description": "Custom skills plugin with role-based model selection for OpenCode",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "opencode",
+    "skills",
+    "plugin",
+    "model-routing",
+    "ai-agents"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/my-skills-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/my-skills-plugin/issues"
+  },
+  "homepage": "https://github.com/your-username/my-skills-plugin#readme",
+  "opencode": {
+    "pluginType": "skills",
+    "configFile": "my-skills-config.json",
+    "skillsDirectory": "skills",
+    "supportedVersions": ">=1.0.0"
+  },
+  "files": [
+    "skills/",
+    "my-skills-config.json",
+    "index.js",
+    "README.md"
+  ],
+  "dependencies": {},
+  "devDependencies": {}
+}
