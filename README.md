@@ -13,7 +13,8 @@ A custom skills plugin that provides role-based model selection for different de
 
 | Task Type | Model | Use Case |
 |-----------|-------|----------|
-| Frontend & Architecture | Kimi-K2.5 | UI components, system design |
+| Frontend | Kimi-K2.5 | UI components, responsive design |
+| Architecture | Kimi-K2.5 | System design, architecture decisions |
 | Requirement Implementation | GLM-5 | Feature development, business logic |
 | Bug Investigation | DeepSeek-V3.2 | Debugging, error analysis |
 | Low Difficulty Tasks | MiniMax-M2.7 | Simple tasks, documentation |
