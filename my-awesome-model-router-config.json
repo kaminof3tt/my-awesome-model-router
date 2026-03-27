@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/your-username/your-repo/main/schema.json",
   "version": "1.0.0",
-  "name": "my-skills-plugin",
+  "name": "my-awesome-model-router",
   "description": "Custom skills plugin with role-based model selection",
   
   "modelProviders": {

@@ -41,7 +41,7 @@
 ### 从 npm 安装（如已发布）
 
 ```bash
-npm install my-skills-plugin
+npm install my-awesome-model-router
 ```
 
 然后在你的 `opencode.json` 中添加：
@@ -49,7 +49,7 @@ npm install my-skills-plugin
 ```json
 {
   "plugin": [
-    "my-skills-plugin"
+    "my-awesome-model-router"
   ]
 }
 ```
@@ -62,7 +62,7 @@ npm install my-skills-plugin
 
 ### 自定义配置
 
-如需自定义模型路由，在 OpenCode 配置目录下创建 `my-skills-config.json` 文件：
+如需自定义模型路由，在 OpenCode 配置目录下创建 `my-awesome-model-router-config.json` 文件：
 
 ```json
 {
@@ -229,11 +229,11 @@ task(category="low-difficulty", prompt="更新 README 文档")
    [使用指南]
    ```
 
-3. 更新 `my-skills-config.json` 中的配置
+3. 更新 `my-awesome-model-router-config.json` 中的配置
 
 ### 修改模型映射
 
-编辑 `my-skills-config.json` 文件以更改不同任务类型使用的模型：
+编辑 `my-awesome-model-router-config.json` 文件以更改不同任务类型使用的模型：
 
 ```json
 {

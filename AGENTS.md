@@ -4,14 +4,14 @@ Guide for AI agents working in this repository.
 
 ## Project Overview
 
-**my-skills-plugin** is an OpenCode plugin providing role-based model routing for AI agents. It maps development tasks to specialized models optimized for domains including frontend, backend, architecture, testing, QA, debugging, documentation, refactoring, and database work.
+**my-awesome-model-router** is an OpenCode plugin providing role-based model routing for AI agents. It maps development tasks to specialized models optimized for domains including frontend, backend, architecture, testing, QA, debugging, documentation, refactoring, and database work.
 
 ## Repository Structure
 
 ```
 my-awesome-model-router/
 ├── index.js                    # Plugin entry point (CommonJS)
-├── my-skills-config.json       # Model routing configuration
+├── my-awesome-model-router-config.json       # Model routing configuration
 ├── skills/                     # Skill definitions
 │   ├── frontend/SKILL.md       # UI/UX, components, styling
 │   ├── architect/SKILL.md      # System design, architecture
@@ -78,7 +78,7 @@ const getModelForAgent = (agentType) => {
 
 ```javascript
 try {
-  const config = require('./my-skills-config.json');
+  const config = require('./my-awesome-model-router-config.json');
   return config;
 } catch (error) {
   console.error('Failed to load config:', error);
@@ -94,7 +94,7 @@ try {
 ```javascript
 const fs = require('fs');
 const path = require('path');
-const config = require('./my-skills-config.json');
+const config = require('./my-awesome-model-router-config.json');
 ```
 
 ## Skill Development
@@ -131,7 +131,7 @@ When creating or modifying skills:
 - **No TypeScript** - pure JavaScript project
 - **No bundler** - files loaded directly by OpenCode
 - **Plugin API** - `index.js` exports `init`, `getSkills`, `getModelConfig`
-- **Configuration-driven** - model routing defined in `my-skills-config.json`, not hardcoded
+- **Configuration-driven** - model routing defined in `my-awesome-model-router-config.json`, not hardcoded
 
 ## Prohibited Actions
 

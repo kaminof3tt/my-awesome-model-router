@@ -4,12 +4,12 @@
  * This plugin provides role-based model selection for different development tasks.
  * It includes skills for frontend, backend, architecture, testing, and QA roles.
  * 
- * @module my-skills-plugin
+ * @module my-awesome-model-router
  */
 
 // Plugin metadata
 const pluginInfo = {
-  name: 'my-skills-plugin',
+  name: 'my-awesome-model-router',
   version: '1.0.0',
   description: 'Custom skills plugin with role-based model selection',
   author: 'Your Name'
@@ -65,7 +65,7 @@ module.exports = {
     
     if (!superpowersLoaded) {
       console.warn(
-        '[my-skills-plugin] 警告: superpowers 插件未加载。' +
+        '[my-awesome-model-router] 警告: superpowers 插件未加载。' +
         '本插件的部分功能可能无法正常工作。' +
         '请确保在 opencode.json 中先配置 superpowers 插件。'
       );
@@ -73,13 +73,13 @@ module.exports = {
       // 尝试获取 superpowers 插件（如果 API 支持）
       const superpowers = getSuperpowersPlugin(opencode);
       if (superpowers) {
-        console.log('[my-skills-plugin] 已找到 superpowers 插件实例');
+        console.log('[my-awesome-model-router] 已找到 superpowers 插件实例');
       }
     } else {
-      console.log('[my-skills-plugin] superpowers 插件已加载，依赖检查通过');
+      console.log('[my-awesome-model-router] superpowers 插件已加载，依赖检查通过');
     }
     
-    console.log('My Skills Plugin initialized');
+    console.log('my-awesome-model-router initialized');
     return {
       name: pluginInfo.name,
       version: pluginInfo.version,
@@ -107,7 +107,7 @@ module.exports = {
   // Get model configuration
   getModelConfig: () => {
     try {
-      const config = require('./my-skills-config.json');
+      const config = require('./my-awesome-model-router-config.json');
       return config;
     } catch (error) {
       console.error('Error loading model config:', error);

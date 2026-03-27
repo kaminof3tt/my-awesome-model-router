@@ -57,7 +57,7 @@ Add to your `opencode.json`:
 ### From npm (if published)
 
 ```bash
-npm install my-skills-plugin
+npm install my-awesome-model-router
 ```
 
 Then add to your `opencode.json`:
@@ -65,7 +65,7 @@ Then add to your `opencode.json`:
 ```json
 {
   "plugin": [
-    "my-skills-plugin"
+    "my-awesome-model-router"
   ]
 }
 ```
@@ -78,7 +78,7 @@ The plugin automatically configures model routing based on task type. No additio
 
 ### Custom Configuration
 
-To customize the model routing, create a `my-skills-config.json` file in your OpenCode config directory:
+To customize the model routing, create a `my-awesome-model-router-config.json` file in your OpenCode config directory:
 
 ```json
 {
@@ -245,11 +245,11 @@ The plugin uses the following logic to select models:
    [Usage guidelines]
    ```
 
-3. Update the configuration in `my-skills-config.json`
+3. Update the configuration in `my-awesome-model-router-config.json`
 
 ### Modifying Model Mappings
 
-Edit the `my-skills-config.json` file to change which models are used for different task types:
+Edit the `my-awesome-model-router-config.json` file to change which models are used for different task types:
 
 ```json
 {
@@ -271,8 +271,8 @@ Edit the `my-skills-config.json` file to change which models are used for differ
 3. Check the OpenCode logs for errors
 4. **确保 superpowers 插件已加载** - 本插件依赖 superpowers 插件，请检查：
    - `opencode.json` 中是否包含 `superpowers` 插件
-   - superpowers 插件是否在 my-skills-plugin 之前配置
-   - 控制台是否输出警告信息 `[my-skills-plugin] 警告: superpowers 插件未加载`
+   - superpowers 插件是否在 my-awesome-model-router 之前配置
+   - 控制台是否输出警告信息 `[my-awesome-model-router] 警告: superpowers 插件未加载`
 
 ### Skills Not Working
 

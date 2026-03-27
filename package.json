@@ -1,5 +1,5 @@
 {
-  "name": "my-skills-plugin",
+  "name": "my-awesome-model-router",
   "version": "1.0.0",
   "description": "Custom skills plugin with role-based model selection for OpenCode",
   "main": "index.js",
@@ -25,13 +25,13 @@
   "homepage": "https://github.com/kaminof3tt/my-awesome-model-router#readme",
   "opencode": {
     "pluginType": "skills",
-    "configFile": "my-skills-config.json",
+    "configFile": "my-awesome-model-router-config.json",
     "skillsDirectory": "skills",
     "supportedVersions": ">=1.0.0"
   },
   "files": [
     "skills/",
-    "my-skills-config.json",
+    "my-awesome-model-router-config.json",
     "index.js",
     "README.md"
   ],
