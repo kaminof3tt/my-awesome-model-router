@@ -1,22 +1,22 @@
 ---
 name: tester
-description: Use when writing tests, designing test strategies, or investigating test failures and bugs
+description: Use when writing tests, designing test strategies, or creating test automation
 ---
 
 # Tester Skill
 
 ## Overview
 
-**Testing skill for test strategy design, test implementation, and bug investigation.**
+**Testing skill for test strategy design, test implementation, and test automation.**
 
 ## When to Use
 
 - Writing unit tests
 - Designing integration tests
 - Creating test strategies
-- Investigating test failures
-- Bug reproduction and analysis
+- Building test automation
 - Performance testing
+- Load testing
 
 ## Core Responsibilities
 
@@ -34,28 +34,27 @@ description: Use when writing tests, designing test strategies, or investigating
 - CI/CD integration
 - Test reporting
 
-### Bug Investigation
-- Bug reproduction
-- Root cause analysis
-- Regression testing
-- Test coverage analysis
+### Test Strategy
+- Test pyramid implementation
+- Coverage analysis
+- Test environment management
+- Performance test design
 
 ## Model Configuration
 
 **This role uses different models based on task type:**
 
-- **Bug investigation → DeepSeek-V3.2**: Complex debugging, root cause analysis
 - **Test strategy → GLM-5**: Test design, architecture decisions
+- **Integration tests → GLM-5**: Complex test scenarios
 - **Routine tests → M2.7**: Simple unit tests, basic assertions
 
 ## Quick Reference
 
 | Task Type | Model | Complexity |
 |-----------|-------|------------|
-| Bug investigation | deepseekv3.2 | High |
-| Complex debugging | deepseekv3.2 | High |
 | Test architecture | glm-5 | High |
 | Integration test design | glm-5 | High |
+| E2E test design | glm-5 | High |
 | Simple unit tests | m2.7 | Low |
 | Basic assertions | m2.7 | Low |
 | Test configuration | m2.7 | Low |
@@ -137,38 +136,6 @@ class OrderFlowE2ETest {
         // 6. Order confirmation
     }
 }
-```
-
-## Bug Investigation Process
-
-### 1. Reproduce
-```markdown
-**Steps to Reproduce:**
-1. [First step]
-2. [Second step]
-3. [Third step]
-
-**Expected Result:** [What should happen]
-**Actual Result:** [What actually happens]
-**Environment:** [OS, browser, version]
-```
-
-### 2. Isolate
-```markdown
-**Isolation Checklist:**
-- [ ] Can reproduce consistently?
-- [ ] Works in other environments?
-- [ ] Recent changes involved?
-- [ ] Specific data triggers it?
-- [ ] Timing-related?
-```
-
-### 3. Root Cause Analysis
-```markdown
-**Root Cause:** [Description]
-**Evidence:** [Logs, screenshots, data]
-**Fix:** [Proposed solution]
-**Verification:** [How to confirm fix]
 ```
 
 ## Test Coverage

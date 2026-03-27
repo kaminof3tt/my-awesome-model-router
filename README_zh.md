@@ -4,7 +4,7 @@
 
 ## 功能特性
 
-- **基于角色的技能**：前端、后端、架构、测试、QA
+- **基于角色的技能**：前端、后端、架构、测试、QA、调试、文档、重构、数据库
 - **智能模型路由**：自动为每种任务选择最佳模型
 - **易于安装**：从 GitHub 或 npm 安装
 - **可配置**：自定义模型映射和任务类型
@@ -15,9 +15,13 @@
 |----------|------|----------|
 | 前端 | Kimi-K2.5 | UI 组件、响应式设计 |
 | 架构 | Kimi-K2.5 | 系统设计、架构决策 |
+| 重构 | Kimi-K2.5 | 代码重构、技术债务处理 |
 | 需求实现 | GLM-5 | 功能开发、业务逻辑 |
-| Bug 调查 | DeepSeek-V3.2 | 调试、错误分析 |
-| 低难度任务 | MiniMax-M2.7 | 简单任务、文档 |
+| 数据库 | GLM-5 | 数据库设计、查询优化 |
+| Bug 修复 | DeepSeek-V3.2 | Bug 修复、错误分析 |
+| 调试 | DeepSeek-V3.2 | 根因分析、问题诊断 |
+| 文档 | MiniMax-M2.7 | 技术文档、API 文档 |
+| 低难度任务 | MiniMax-M2.7 | 简单任务、常规工作 |
 | 兜底方案 | MiniMax-M2.7 | 未指定任务的默认选项 |
 
 ## 安装
@@ -88,6 +92,22 @@ npm install my-skills-plugin
     "qa": {
       "model": "deepseekv3.2",
       "skills": ["qa-engineer"]
+    },
+    "debugger": {
+      "model": "deepseekv3.2",
+      "skills": ["debugger"]
+    },
+    "documenter": {
+      "model": "m2.7",
+      "skills": ["documenter"]
+    },
+    "refactoring-specialist": {
+      "model": "k2.5",
+      "skills": ["refactoring-specialist"]
+    },
+    "database-specialist": {
+      "model": "glm5",
+      "skills": ["database-specialist"]
     }
   }
 }
@@ -106,8 +126,23 @@ task(category="frontend-architecture", prompt="创建响应式导航栏组件")
 // 架构任务 - 使用 Kimi-K2.5
 task(subagent_type="architect", prompt="设计微服务架构")
 
-// Bug 调查 - 使用 DeepSeek-V3.2
+// 重构任务 - 使用 Kimi-K2.5
+task(category="refactoring", prompt="提取重复代码为共享工具函数")
+
+// 后端任务 - 使用 GLM-5
+task(subagent_type="backend", prompt="实现用户认证 API")
+
+// 数据库任务 - 使用 GLM-5
+task(category="database", prompt="设计电商系统数据库架构")
+
+// Bug 修复 - 使用 DeepSeek-V3.2
 task(category="bug-fix", prompt="调查登录认证失败问题")
+
+// 调试任务 - 使用 DeepSeek-V3.2
+task(subagent_type="debugger", prompt="诊断生产服务器内存泄漏问题")
+
+// 文档任务 - 使用 MiniMax-M2.7
+task(category="documentation", prompt="编写用户接口 API 文档")
 
 // 简单任务 - 使用 MiniMax-M2.7
 task(category="low-difficulty", prompt="更新 README 文档")
@@ -136,18 +171,38 @@ task(category="low-difficulty", prompt="更新 README 文档")
 
 ### 后端开发者
 - API 开发
-- 数据库设计
 - 业务逻辑实现
+- 服务端集成
 
 ### 测试工程师
 - 测试策略设计
 - 测试实现
-- Bug 调查
+- 测试自动化
 
 ### QA 工程师
 - 代码审查
 - 质量指标
 - 流程改进
+
+### 调试专家
+- 根因分析
+- 错误诊断
+- 生产事故排查
+
+### 文档专家
+- 技术文档编写
+- API 文档编写
+- 代码注释
+
+### 重构专家
+- 代码结构优化
+- 技术债务处理
+- 代码现代化
+
+### 数据库专家
+- 数据库架构设计
+- 查询优化
+- 迁移规划
 
 ## 自定义
 

@@ -36,6 +36,26 @@
       "model": "deepseekv3.2",
       "skills": ["qa-engineer"],
       "description": "Quality assurance and process improvement specialist"
+    },
+    "debugger": {
+      "model": "deepseekv3.2",
+      "skills": ["debugger"],
+      "description": "Debugging and root cause analysis specialist"
+    },
+    "documenter": {
+      "model": "m2.7",
+      "skills": ["documenter"],
+      "description": "Technical documentation specialist"
+    },
+    "refactoring-specialist": {
+      "model": "k2.5",
+      "skills": ["refactoring-specialist"],
+      "description": "Code refactoring and technical debt reduction specialist"
+    },
+    "database-specialist": {
+      "model": "glm5",
+      "skills": ["database-specialist"],
+      "description": "Database design and optimization specialist"
     }
   },
   
@@ -43,22 +63,42 @@
     "frontend-architecture": {
       "model": "k2.5",
       "description": "Frontend and architecture tasks",
-      "agents": ["frontend", "architect"]
+      "agents": ["frontend", "architect", "refactoring-specialist"]
     },
     "requirement-implementation": {
       "model": "glm5",
       "description": "Feature implementation and requirement fulfillment",
-      "agents": ["backend", "frontend"]
+      "agents": ["backend", "frontend", "database-specialist"]
     },
     "bug-fix": {
       "model": "deepseekv3.2",
       "description": "Bug investigation and fixing",
-      "agents": ["tester", "qa", "backend"]
+      "agents": ["tester", "qa", "backend", "debugger"]
+    },
+    "debugging": {
+      "model": "deepseekv3.2",
+      "description": "Debugging and root cause analysis",
+      "agents": ["debugger", "tester"]
+    },
+    "documentation": {
+      "model": "m2.7",
+      "description": "Technical documentation tasks",
+      "agents": ["documenter"]
+    },
+    "refactoring": {
+      "model": "k2.5",
+      "description": "Code refactoring and improvement",
+      "agents": ["refactoring-specialist", "architect"]
+    },
+    "database": {
+      "model": "glm5",
+      "description": "Database design and optimization",
+      "agents": ["database-specialist", "backend"]
     },
     "low-difficulty": {
       "model": "m2.7",
       "description": "Simple, repetitive tasks",
-      "agents": ["frontend", "backend", "tester"]
+      "agents": ["frontend", "backend", "tester", "documenter"]
     },
     "fallback": {
       "model": "m2.7",
@@ -84,13 +124,29 @@
       "category": "bug-fix",
       "model": "deepseekv3.2"
     },
+    "debugging": {
+      "category": "debugging",
+      "model": "deepseekv3.2"
+    },
     "unit-test": {
       "category": "low-difficulty",
       "model": "m2.7"
     },
     "documentation": {
-      "category": "low-difficulty",
+      "category": "documentation",
       "model": "m2.7"
+    },
+    "refactoring": {
+      "category": "refactoring",
+      "model": "k2.5"
+    },
+    "database-design": {
+      "category": "database",
+      "model": "glm5"
+    },
+    "query-optimization": {
+      "category": "database",
+      "model": "glm5"
     }
   },
   
@@ -107,9 +163,24 @@
         "priority": 10
       },
       {
+        "condition": "task contains 'refactor' OR task contains 'cleanup' OR task contains 'restructure'",
+        "model": "k2.5",
+        "priority": 9
+      },
+      {
         "condition": "task contains 'implement' OR task contains 'feature' OR task contains 'requirement'",
         "model": "glm5",
         "priority": 8
+      },
+      {
+        "condition": "task contains 'database' OR task contains 'query' OR task contains 'SQL' OR task contains 'schema'",
+        "model": "glm5",
+        "priority": 8
+      },
+      {
+        "condition": "task contains 'debug' OR task contains 'investigate' OR task contains 'root cause'",
+        "model": "deepseekv3.2",
+        "priority": 9
       },
       {
         "condition": "task contains 'bug' OR task contains 'fix' OR task contains 'error'",
@@ -118,6 +189,11 @@
       },
       {
         "condition": "task contains 'test' OR task contains 'simple' OR task contains 'routine'",
+        "model": "m2.7",
+        "priority": 5
+      },
+      {
+        "condition": "task contains 'document' OR task contains 'readme' OR task contains 'comment'",
         "model": "m2.7",
         "priority": 5
       },

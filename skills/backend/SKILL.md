@@ -1,22 +1,22 @@
 ---
 name: backend-developer
-description: Use when working on backend development tasks including API development, database design, business logic implementation, and server-side operations
+description: Use when working on backend development tasks including API development, business logic implementation, and server-side operations
 ---
 
 # Backend Developer Skill
 
 ## Overview
 
-**Backend development skill for API development, database design, and business logic implementation.**
+**Backend development skill for API development, business logic implementation, and server-side operations.**
 
 ## When to Use
 
 - Implementing REST/GraphQL APIs
-- Designing database schemas
 - Writing business logic
 - Handling authentication/authorization
 - Implementing caching strategies
 - Working with message queues
+- Server-side integration
 
 ## Core Responsibilities
 
@@ -28,13 +28,6 @@ description: Use when working on backend development tasks including API develop
 - Rate limiting
 - API versioning
 
-### Database Operations
-- Schema design and migrations
-- Query optimization
-- Indexing strategies
-- Transaction management
-- Connection pooling
-
 ### Business Logic
 - Domain modeling
 - Validation rules
@@ -42,13 +35,19 @@ description: Use when working on backend development tasks including API develop
 - Error handling
 - Logging and monitoring
 
+### Integration
+- External service integration
+- Message queue handling
+- Caching strategies
+- Authentication/authorization
+
 ## Model Configuration
 
 **This role uses different models based on task complexity:**
 
 - **Complex logic → GLM-5**: Business rules, algorithms, performance optimization
-- **Bug fixes → DeepSeek-V3.2**: Debugging, error investigation, root cause analysis
-- **Simple tasks → M2.7**: CRUD operations, basic queries, configuration
+- **Integration → GLM-5**: External service integration, message queues
+- **Simple tasks → M2.7**: CRUD operations, basic endpoints, configuration
 
 ## Quick Reference
 
@@ -57,10 +56,9 @@ description: Use when working on backend development tasks including API develop
 | Business logic | glm-5 | High |
 | Algorithm design | glm-5 | High |
 | Performance optimization | glm-5 | High |
-| Bug investigation | deepseekv3.2 | Medium-High |
-| Error handling | deepseekv3.2 | Medium |
+| External integration | glm-5 | Medium |
 | CRUD operations | m2.7 | Low |
-| Basic queries | m2.7 | Low |
+| Basic endpoints | m2.7 | Low |
 | Configuration | m2.7 | Low |
 
 ## API Design Principles
