@@ -28,7 +28,7 @@ Add to your `opencode.json`:
 ```json
 {
   "plugin": [
-    "my-skills@git+https://github.com/your-username/my-skills-plugin.git"
+    "my-skills@git+https://github.com/kaminof3tt/my-awesome-model-router.git"
   ]
 }
 ```

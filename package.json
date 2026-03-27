@@ -17,12 +17,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-username/my-skills-plugin.git"
+    "url": "git+https://github.com/kaminof3tt/my-awesome-model-router.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/my-skills-plugin/issues"
+    "url": "https://github.com/kaminof3tt/my-awesome-model-router/issues"
   },
-  "homepage": "https://github.com/your-username/my-skills-plugin#readme",
+  "homepage": "https://github.com/kaminof3tt/my-awesome-model-router#readme",
   "opencode": {
     "pluginType": "skills",
     "configFile": "my-skills-config.json",
