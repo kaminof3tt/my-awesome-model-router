@@ -1,4 +1,4 @@
-# My Skills Plugin for OpenCode
+# My Awesome Model Router for OpenCode
 
 一个为 OpenCode 提供基于角色的模型选择功能的自定义技能插件。
 
@@ -6,8 +6,15 @@
 
 - **基于角色的技能**：前端、后端、架构、测试、QA、调试、文档、重构、数据库
 - **智能模型路由**：自动为每种任务选择最佳模型
-- **易于安装**：从 GitHub 或 npm 安装
-- **可配置**：自定义模型映射和任务类型
+- **模块化架构**：清晰的关注点分离（配置、技能、路由、插件、缓存）
+- **插件系统**：可扩展的钩子系统，支持第三方扩展
+- **技能自动发现**：扫描 skills/ 目录并从 SKILL.md frontmatter 加载技能
+- **配置热重载**：通过文件监听器在 config.json 更改时自动重新加载
+- **配置验证**：验证 modelProviders、agents、categories 和技能引用
+- **后备链条**：主模型 -> 次模型 -> 后备模型选择
+- **异步 API**：所有核心函数都有异步版本，提升性能
+- **测试覆盖**：使用 Jest 实现全面测试覆盖（70% 阈值）
+- **代码质量**：ESLint + Prettier + EditorConfig
 
 ## 模型路由策略
 
@@ -33,7 +40,7 @@
 ```json
 {
   "plugin": [
-    "my-skills@git+https://github.com/kaminof3tt/my-awesome-model-router.git"
+    "my-awesome-model-router@git+https://github.com/kaminof3tt/my-awesome-model-router.git"
   ]
 }
 ```
@@ -51,65 +58,6 @@ npm install my-awesome-model-router
   "plugin": [
     "my-awesome-model-router"
   ]
-}
-```
-
-## 配置
-
-### 基础配置
-
-插件会根据任务类型自动配置模型路由，基础使用无需额外配置。
-
-### 自定义配置
-
-如需自定义模型路由，在 OpenCode 配置目录下创建 `my-awesome-model-router-config.json` 文件：
-
-```json
-{
-  "modelProviders": {
-    "k2.5": "volcengine-plan/kimi-k2.5",
-    "glm5": "volcengine-plan/glm-5",
-    "deepseekv3.2": "baiduqianfancodingplan/deepseek-v3.2",
-    "m2.7": "minimax-cn-coding-plan/MiniMax-M2.7"
-  },
-  "agents": {
-    "frontend": {
-      "model": "k2.5",
-      "skills": ["frontend-developer"]
-    },
-    "architect": {
-      "model": "k2.5",
-      "skills": ["architect"]
-    },
-    "backend": {
-      "model": "glm5",
-      "skills": ["backend-developer"]
-    },
-    "tester": {
-      "model": "deepseekv3.2",
-      "skills": ["tester"]
-    },
-    "qa": {
-      "model": "deepseekv3.2",
-      "skills": ["qa-engineer"]
-    },
-    "debugger": {
-      "model": "deepseekv3.2",
-      "skills": ["debugger"]
-    },
-    "documenter": {
-      "model": "m2.7",
-      "skills": ["documenter"]
-    },
-    "refactoring-specialist": {
-      "model": "k2.5",
-      "skills": ["refactoring-specialist"]
-    },
-    "database-specialist": {
-      "model": "glm5",
-      "skills": ["database-specialist"]
-    }
-  }
 }
 ```
 
@@ -148,138 +96,144 @@ task(category="documentation", prompt="编写用户接口 API 文档")
 task(category="low-difficulty", prompt="更新 README 文档")
 ```
 
-### 模型选择逻辑
+### 插件 API
 
-插件使用以下逻辑选择模型：
+```javascript
+const plugin = require('my-awesome-model-router');
 
-1. **显式类别**：如果指定了 `category`，使用该类别配置的模型
-2. **代理类型**：如果指定了 `subagent_type`，使用该代理配置的模型
-3. **任务关键词**：插件分析任务关键词以确定最佳模型
-4. **兜底方案**：未找到匹配时，使用兜底模型（MiniMax-M2.7）
+// 初始化插件
+await plugin.init();
 
-## 包含的技能
+// 获取可用技能
+const skills = plugin.getSkills();
+const skillsAsync = await plugin.getSkillsAsync();
 
-### 前端开发者
-- UI 组件开发
-- 样式与响应式设计
-- 前端性能优化
+// 获取模型配置
+const config = plugin.getModelConfig();
 
-### 架构师
-- 系统设计与架构
-- 技术评估
-- 技术战略规划
+// 获取带后备的模型
+const model = plugin.getModelWithFallback('frontend', 'implement UI');
 
-### 后端开发者
-- API 开发
-- 业务逻辑实现
-- 服务端集成
+// 注册自定义插件
+plugin.registerPlugin('my-plugin', {
+  init(api, options) { /* ... */ },
+  hooks: {
+    beforeModelRouting: (data) => data,
+    afterModelRouting: (data) => data
+  },
+  cleanup() { /* ... */ }
+});
 
-### 测试工程师
-- 测试策略设计
-- 测试实现
-- 测试自动化
+// 获取路由调试信息
+const debug = plugin.getRoutingDebugInfo('frontend', 'implement UI');
 
-### QA 工程师
-- 代码审查
-- 质量指标
-- 流程改进
+// 获取统计信息
+const stats = plugin.getStats();
+```
 
-### 调试专家
-- 根因分析
-- 错误诊断
-- 生产事故排查
+### 可用钩子
 
-### 文档专家
-- 技术文档编写
-- API 文档编写
-- 代码注释
+- `beforeConfigLoad` / `afterConfigLoad`
+- `beforeSkillDiscovery` / `afterSkillDiscovery`
+- `beforeModelRouting` / `afterModelRouting`
+- `onConfigChange` / `onSkillsChange`
 
-### 重构专家
-- 代码结构优化
-- 技术债务处理
-- 代码现代化
+## 配置
 
-### 数据库专家
-- 数据库架构设计
-- 查询优化
-- 迁移规划
-
-## 自定义
-
-### 添加新技能
-
-1. 在 `skills/` 目录下创建新目录：
-   ```bash
-   mkdir skills/my-new-skill
-   ```
-
-2. 创建 `SKILL.md` 文件：
-   ```markdown
-   ---
-   name: my-new-skill
-   description: Use when [触发条件]
-   ---
-   
-   # My New Skill
-   
-   ## 概述
-   [描述]
-   
-   ## 使用场景
-   [使用指南]
-   ```
-
-3. 更新 `my-awesome-model-router-config.json` 中的配置
-
-### 修改模型映射
-
-编辑 `my-awesome-model-router-config.json` 文件以更改不同任务类型使用的模型：
+插件使用 `config.json` 进行模型路由配置：
 
 ```json
 {
-  "categories": {
-    "my-custom-category": {
-      "model": "my-preferred-model",
-      "description": "自定义任务类别"
-    }
+  "modelProviders": {
+    "k2.5": "volcengine-plan/kimi-k2.5",
+    "glm5": "volcengine-plan/glm-5",
+    "deepseekv3.2": "baiduqianfancodingplan/deepseek-v3.2",
+    "m2.7": "minimax-cn-coding-plan/MiniMax-M2.7"
+  },
+  "agents": {
+    "frontend": { "model": "k2.5", "skills": ["frontend-developer"] },
+    "backend": { "model": "glm5", "skills": ["backend-developer"] }
+  },
+  "categoryKeywords": {
+    "frontend-architecture": ["frontend", "ui", "component"],
+    "bug-fix": ["bug", "fix", "error"]
+  },
+  "fallbackChains": {
+    "frontend": ["k2.5", "glm5", "m2.7"],
+    "default": ["m2.7"]
   }
 }
 ```
 
-## 故障排除
+## 开发
 
-### 插件未加载
+### 前置条件
 
-1. 检查插件是否在 `opencode.json` 中列出
-2. 验证 GitHub URL 是否正确
-3. 检查 OpenCode 日志中的错误信息
+- Node.js >= 14
+- npm
 
-### 技能不工作
+### 设置
 
-1. 确保 `SKILL.md` 文件包含正确的 frontmatter
-2. 检查技能描述是否以 "Use when" 开头
-3. 验证技能目录结构
+```bash
+git clone https://github.com/kaminof3tt/my-awesome-model-router.git
+cd my-awesome-model-router
+npm install
+```
 
-### 模型选择不正确
+### 测试
 
-1. 检查 `opencode.json` 中的模型提供者配置
-2. 验证模型名称是否完全匹配
-3. 检查任务提示中的关键词
+```bash
+npm test                    # 运行所有测试并生成覆盖率报告
+npm test -- modular.test.js # 运行特定测试文件
+npm test -- --watch         # 监听模式
+npm run test:ci             # CI 模式
+```
+
+### 代码检查
+
+```bash
+npx eslint src/ tests/
+```
+
+## 项目结构
+
+```
+my-awesome-model-router/
+├── index.js                    # 入口文件（重新导出 src/）
+├── src/                        # 模块化实现
+│   ├── index.js               # 主模块，包含插件 API
+│   ├── config/                # 配置加载、验证、热重载
+│   ├── skills/                # 技能发现和 YAML 解析
+│   ├── routing/               # 模型路由逻辑
+│   ├── plugin/                # 插件系统和钩子
+│   └── cache/                 # 基于 TTL 的缓存管理器
+├── config.json                # 模型路由配置
+├── skills/<name>/SKILL.md     # 技能定义（自动发现）
+├── tests/                     # Jest 测试文件
+├── jest.config.js             # Jest 配置
+├── .eslintrc                  # ESLint 配置
+├── .prettierrc                # Prettier 配置
+└── .editorconfig              # 编辑器配置
+```
+
+## 包含的技能
+
+| 技能 | 描述 |
+|------|------|
+| frontend-developer | UI 组件、样式、响应式设计 |
+| architect | 系统设计、架构决策 |
+| backend-developer | API 开发、业务逻辑 |
+| tester | 测试策略、测试自动化 |
+| qa-engineer | 代码审查、质量指标 |
+| debugger | 根因分析、问题诊断 |
+| documenter | 技术文档编写 |
+| refactoring-specialist | 代码重构、技术债务 |
+| database-specialist | 数据库设计、查询优化 |
 
 ## 参与贡献
 
-1. Fork 本仓库
-2. 创建功能分支
-3. 进行修改
-4. 提交 Pull Request
+请参阅 [CONTRIBUTING.md](CONTRIBUTING.md) 了解贡献指南。
 
 ## 许可证
 
-MIT License - 详见 LICENSE 文件
-
-## 支持
-
-如有问题或疑问：
-- 在 GitHub 上创建 Issue
-- 查阅 OpenCode 文档
-- 参考故障排除部分
+MIT License - 详见 [LICENSE](LICENSE) 文件

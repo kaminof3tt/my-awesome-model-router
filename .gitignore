@@ -1,5 +1,7 @@
 node_modules/
+coverage/
 *.log
+*.backup
 .DS_Store
 Thumbs.db
 .env
@@ -10,6 +12,5 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
 yarn.lock
 pnpm-lock.yaml

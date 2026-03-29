@@ -1,4 +1,4 @@
-# My Skills Plugin for OpenCode
+# My Awesome Model Router for OpenCode
 
 A custom skills plugin that provides role-based model selection for different development tasks.
 
@@ -6,8 +6,15 @@ A custom skills plugin that provides role-based model selection for different de
 
 - **Role-based skills**: Frontend, Backend, Architecture, Testing, QA, Debugging, Documentation, Refactoring, Database
 - **Intelligent model routing**: Automatically selects the best model for each task
-- **Easy installation**: Install from GitHub or npm
-- **Configurable**: Customize model mappings and task types
+- **Modular architecture**: Clean separation of concerns (config, skills, routing, plugin, cache)
+- **Plugin system**: Extensible hook system for third-party extensions
+- **Skills auto-discovery**: Scans skills/ directory and loads skills from SKILL.md frontmatter
+- **Config hot-reload**: Automatic reload when config.json changes via file watcher
+- **Config validation**: Validates modelProviders, agents, categories, and skills references
+- **Fallback chains**: Primary -> secondary -> fallback model selection
+- **Async API**: All core functions have async versions for better performance
+- **Testing**: Comprehensive test coverage with Jest (70% threshold)
+- **Code quality**: ESLint + Prettier + EditorConfig
 
 ## Model Routing Strategy
 
@@ -26,21 +33,6 @@ A custom skills plugin that provides role-based model selection for different de
 
 ## Installation
 
-### 前置依赖
-
-本插件依赖 **superpowers** 插件。请确保在 `opencode.json` 中先配置 superpowers 插件：
-
-```json
-{
-  "plugin": [
-    "superpowers",
-    "my-skills@git+https://github.com/kaminof3tt/my-awesome-model-router.git"
-  ]
-}
-```
-
-**注意**：插件加载顺序很重要。`plugin` 数组中靠前的插件会先加载。
-
 ### From GitHub
 
 Add to your `opencode.json`:
@@ -48,8 +40,7 @@ Add to your `opencode.json`:
 ```json
 {
   "plugin": [
-    "superpowers",
-    "my-skills@git+https://github.com/kaminof3tt/my-awesome-model-router.git"
+    "my-awesome-model-router@git+https://github.com/kaminof3tt/my-awesome-model-router.git"
   ]
 }
 ```
@@ -67,65 +58,6 @@ Then add to your `opencode.json`:
   "plugin": [
     "my-awesome-model-router"
   ]
-}
-```
-
-## Configuration
-
-### Basic Configuration
-
-The plugin automatically configures model routing based on task type. No additional configuration is needed for basic usage.
-
-### Custom Configuration
-
-To customize the model routing, create a `my-awesome-model-router-config.json` file in your OpenCode config directory:
-
-```json
-{
-  "modelProviders": {
-    "k2.5": "volcengine-plan/kimi-k2.5",
-    "glm5": "volcengine-plan/glm-5",
-    "deepseekv3.2": "baiduqianfancodingplan/deepseek-v3.2",
-    "m2.7": "minimax-cn-coding-plan/MiniMax-M2.7"
-  },
-  "agents": {
-    "frontend": {
-      "model": "k2.5",
-      "skills": ["frontend-developer"]
-    },
-    "architect": {
-      "model": "k2.5",
-      "skills": ["architect"]
-    },
-    "backend": {
-      "model": "glm5",
-      "skills": ["backend-developer"]
-    },
-    "tester": {
-      "model": "deepseekv3.2",
-      "skills": ["tester"]
-    },
-    "qa": {
-      "model": "deepseekv3.2",
-      "skills": ["qa-engineer"]
-    },
-    "debugger": {
-      "model": "deepseekv3.2",
-      "skills": ["debugger"]
-    },
-    "documenter": {
-      "model": "m2.7",
-      "skills": ["documenter"]
-    },
-    "refactoring-specialist": {
-      "model": "k2.5",
-      "skills": ["refactoring-specialist"]
-    },
-    "database-specialist": {
-      "model": "glm5",
-      "skills": ["database-specialist"]
-    }
-  }
 }
 ```
 
@@ -164,142 +96,144 @@ task(category="documentation", prompt="Write API documentation for user endpoint
 task(category="low-difficulty", prompt="Update README documentation")
 ```
 
-### Model Selection Logic
+### Plugin API
 
-The plugin uses the following logic to select models:
+```javascript
+const plugin = require('my-awesome-model-router');
 
-1. **Explicit category**: If you specify a `category`, the plugin uses the model configured for that category
-2. **Agent type**: If you specify a `subagent_type`, the plugin uses the model configured for that agent
-3. **Task keywords**: The plugin analyzes task keywords to determine the best model
-4. **Fallback**: If no match is found, the plugin uses the fallback model (MiniMax-M2.7)
+// Initialize plugin
+await plugin.init();
 
-## Skills Included
+// Get available skills
+const skills = plugin.getSkills();
+const skillsAsync = await plugin.getSkillsAsync();
 
-### Frontend Developer
-- UI component development
-- Styling and responsive design
-- Frontend performance optimization
+// Get model configuration
+const config = plugin.getModelConfig();
 
-### Architect
-- System design and architecture
-- Technology evaluation
-- Technical strategy planning
+// Get model with fallback
+const model = plugin.getModelWithFallback('frontend', 'implement UI');
 
-### Backend Developer
-- API development
-- Business logic implementation
-- Server-side integration
+// Register custom plugin
+plugin.registerPlugin('my-plugin', {
+  init(api, options) { /* ... */ },
+  hooks: {
+    beforeModelRouting: (data) => data,
+    afterModelRouting: (data) => data
+  },
+  cleanup() { /* ... */ }
+});
 
-### Tester
-- Test strategy design
-- Test implementation
-- Test automation
+// Get routing debug info
+const debug = plugin.getRoutingDebugInfo('frontend', 'implement UI');
 
-### QA Engineer
-- Code review
-- Quality metrics
-- Process improvement
+// Get statistics
+const stats = plugin.getStats();
+```
 
-### Debugger
-- Root cause analysis
-- Error diagnosis
-- Production incident troubleshooting
+### Available Hooks
 
-### Documenter
-- Technical documentation
-- API documentation
-- Code comments
+- `beforeConfigLoad` / `afterConfigLoad`
+- `beforeSkillDiscovery` / `afterSkillDiscovery`
+- `beforeModelRouting` / `afterModelRouting`
+- `onConfigChange` / `onSkillsChange`
 
-### Refactoring Specialist
-- Code structure improvement
-- Technical debt reduction
-- Code modernization
+## Configuration
 
-### Database Specialist
-- Database schema design
-- Query optimization
-- Migration planning
-
-## Customization
-
-### Adding New Skills
-
-1. Create a new directory in `skills/`:
-   ```bash
-   mkdir skills/my-new-skill
-   ```
-
-2. Create a `SKILL.md` file:
-   ```markdown
-   ---
-   name: my-new-skill
-   description: Use when [triggering conditions]
-   ---
-   
-   # My New Skill
-   
-   ## Overview
-   [Description]
-   
-   ## When to Use
-   [Usage guidelines]
-   ```
-
-3. Update the configuration in `my-awesome-model-router-config.json`
-
-### Modifying Model Mappings
-
-Edit the `my-awesome-model-router-config.json` file to change which models are used for different task types:
+The plugin uses `config.json` for model routing configuration:
 
 ```json
 {
-  "categories": {
-    "my-custom-category": {
-      "model": "my-preferred-model",
-      "description": "Custom task category"
-    }
+  "modelProviders": {
+    "k2.5": "volcengine-plan/kimi-k2.5",
+    "glm5": "volcengine-plan/glm-5",
+    "deepseekv3.2": "baiduqianfancodingplan/deepseek-v3.2",
+    "m2.7": "minimax-cn-coding-plan/MiniMax-M2.7"
+  },
+  "agents": {
+    "frontend": { "model": "k2.5", "skills": ["frontend-developer"] },
+    "backend": { "model": "glm5", "skills": ["backend-developer"] }
+  },
+  "categoryKeywords": {
+    "frontend-architecture": ["frontend", "ui", "component"],
+    "bug-fix": ["bug", "fix", "error"]
+  },
+  "fallbackChains": {
+    "frontend": ["k2.5", "glm5", "m2.7"],
+    "default": ["m2.7"]
   }
 }
 ```
 
-## Troubleshooting
+## Development
 
-### Plugin Not Loading
+### Prerequisites
 
-1. Check that the plugin is listed in your `opencode.json`
-2. Verify the GitHub URL is correct
-3. Check the OpenCode logs for errors
-4. **确保 superpowers 插件已加载** - 本插件依赖 superpowers 插件，请检查：
-   - `opencode.json` 中是否包含 `superpowers` 插件
-   - superpowers 插件是否在 my-awesome-model-router 之前配置
-   - 控制台是否输出警告信息 `[my-awesome-model-router] 警告: superpowers 插件未加载`
+- Node.js >= 14
+- npm
 
-### Skills Not Working
+### Setup
 
-1. Ensure the `SKILL.md` file has correct frontmatter
-2. Check that the skill description includes "Use when..."
-3. Verify the skill directory structure
+```bash
+git clone https://github.com/kaminof3tt/my-awesome-model-router.git
+cd my-awesome-model-router
+npm install
+```
 
-### Model Not Selecting Correctly
+### Testing
 
-1. Check the model provider configuration in `opencode.json`
-2. Verify the model names match exactly
-3. Check the task keywords in your prompt
+```bash
+npm test                    # Run all tests with coverage
+npm test -- modular.test.js # Run specific test file
+npm test -- --watch         # Watch mode
+npm run test:ci             # CI mode
+```
+
+### Linting
+
+```bash
+npx eslint src/ tests/
+```
+
+## Project Structure
+
+```
+my-awesome-model-router/
+├── index.js                    # Entry point (re-exports src/)
+├── src/                        # Modular implementation
+│   ├── index.js               # Main module with plugin API
+│   ├── config/                # Config loading, validation, hot-reload
+│   ├── skills/                # Skill discovery and YAML parsing
+│   ├── routing/               # Model routing logic
+│   ├── plugin/                # Plugin system and hooks
+│   └── cache/                 # TTL-based cache manager
+├── config.json                # Model routing configuration
+├── skills/<name>/SKILL.md     # Skill definitions (auto-discovered)
+├── tests/                     # Jest test files
+├── jest.config.js             # Jest configuration
+├── .eslintrc                  # ESLint config
+├── .prettierrc                # Prettier config
+└── .editorconfig              # Editor config
+```
+
+## Skills Included
+
+| Skill | Description |
+|-------|-------------|
+| frontend-developer | UI components, styling, responsive design |
+| architect | System design, architecture decisions |
+| backend-developer | API development, business logic |
+| tester | Test strategy, test automation |
+| qa-engineer | Code review, quality metrics |
+| debugger | Root cause analysis, diagnostics |
+| documenter | Technical documentation |
+| refactoring-specialist | Code restructuring, tech debt |
+| database-specialist | DB design, query optimization |
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-MIT License - see LICENSE file for details
-
-## Support
-
-For issues and questions:
-- Create an issue on GitHub
-- Check the OpenCode documentation
-- Review the troubleshooting section
+MIT License - see [LICENSE](LICENSE) file for details.

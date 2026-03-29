@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/your-username/your-repo/main/schema.json",
+  "$schema": "./config-schema.json",
   "version": "1.0.0",
   "name": "my-awesome-model-router",
   "description": "Custom skills plugin with role-based model selection",
@@ -107,101 +107,29 @@
     }
   },
   
-  "taskTypes": {
-    "ui-component": {
-      "category": "frontend-architecture",
-      "model": "k2.5"
-    },
-    "api-design": {
-      "category": "frontend-architecture",
-      "model": "k2.5"
-    },
-    "feature-implementation": {
-      "category": "requirement-implementation",
-      "model": "glm5"
-    },
-    "bug-investigation": {
-      "category": "bug-fix",
-      "model": "deepseekv3.2"
-    },
-    "debugging": {
-      "category": "debugging",
-      "model": "deepseekv3.2"
-    },
-    "unit-test": {
-      "category": "low-difficulty",
-      "model": "m2.7"
-    },
-    "documentation": {
-      "category": "documentation",
-      "model": "m2.7"
-    },
-    "refactoring": {
-      "category": "refactoring",
-      "model": "k2.5"
-    },
-    "database-design": {
-      "category": "database",
-      "model": "glm5"
-    },
-    "query-optimization": {
-      "category": "database",
-      "model": "glm5"
-    }
+
+
+  "fallbackChains": {
+    "frontend": ["k2.5", "glm5", "m2.7"],
+    "architect": ["k2.5", "glm5", "m2.7"],
+    "backend": ["glm5", "k2.5", "m2.7"],
+    "tester": ["deepseekv3.2", "glm5", "m2.7"],
+    "qa": ["deepseekv3.2", "glm5", "m2.7"],
+    "debugger": ["deepseekv3.2", "glm5", "m2.7"],
+    "documenter": ["m2.7", "glm5"],
+    "refactoring-specialist": ["k2.5", "glm5", "m2.7"],
+    "database-specialist": ["glm5", "deepseekv3.2", "m2.7"],
+    "default": ["m2.7"]
   },
-  
-  "modelSelection": {
-    "rules": [
-      {
-        "condition": "task contains 'frontend' OR task contains 'UI' OR task contains 'component'",
-        "model": "k2.5",
-        "priority": 10
-      },
-      {
-        "condition": "task contains 'architecture' OR task contains 'design' OR task contains 'system'",
-        "model": "k2.5",
-        "priority": 10
-      },
-      {
-        "condition": "task contains 'refactor' OR task contains 'cleanup' OR task contains 'restructure'",
-        "model": "k2.5",
-        "priority": 9
-      },
-      {
-        "condition": "task contains 'implement' OR task contains 'feature' OR task contains 'requirement'",
-        "model": "glm5",
-        "priority": 8
-      },
-      {
-        "condition": "task contains 'database' OR task contains 'query' OR task contains 'SQL' OR task contains 'schema'",
-        "model": "glm5",
-        "priority": 8
-      },
-      {
-        "condition": "task contains 'debug' OR task contains 'investigate' OR task contains 'root cause'",
-        "model": "deepseekv3.2",
-        "priority": 9
-      },
-      {
-        "condition": "task contains 'bug' OR task contains 'fix' OR task contains 'error'",
-        "model": "deepseekv3.2",
-        "priority": 9
-      },
-      {
-        "condition": "task contains 'test' OR task contains 'simple' OR task contains 'routine'",
-        "model": "m2.7",
-        "priority": 5
-      },
-      {
-        "condition": "task contains 'document' OR task contains 'readme' OR task contains 'comment'",
-        "model": "m2.7",
-        "priority": 5
-      },
-      {
-        "condition": "default",
-        "model": "m2.7",
-        "priority": 1
-      }
-    ]
+
+  "categoryKeywords": {
+    "frontend-architecture": ["frontend", "ui", "component", "interface"],
+    "requirement-implementation": ["implement", "feature", "requirement", "backend"],
+    "bug-fix": ["bug", "fix", "error", "issue"],
+    "debugging": ["debug", "investigate", "root cause"],
+    "documentation": ["document", "readme", "comment"],
+    "refactoring": ["refactor", "cleanup", "restructure"],
+    "database": ["database", "query", "sql", "schema"],
+    "low-difficulty": ["simple", "routine", "easy"]
   }
 }

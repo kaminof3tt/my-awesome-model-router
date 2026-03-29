@@ -4,7 +4,12 @@
   "description": "Custom skills plugin with role-based model selection for OpenCode",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:modular": "jest modular.test.js",
+    "test:all": "jest tests/",
+    "test:ci": "jest --coverage --maxWorkers=2"
   },
   "keywords": [
     "opencode",
@@ -25,16 +30,17 @@
   "homepage": "https://github.com/kaminof3tt/my-awesome-model-router#readme",
   "opencode": {
     "pluginType": "skills",
-    "configFile": "my-awesome-model-router-config.json",
+    "configFile": "config.json",
     "skillsDirectory": "skills",
     "supportedVersions": ">=1.0.0"
   },
   "files": [
     "skills/",
-    "my-awesome-model-router-config.json",
+    "config.json",
     "index.js",
     "README.md"
   ],
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }

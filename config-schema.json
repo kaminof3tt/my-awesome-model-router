@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/my-awesome-model-router-config.json",
+  "title": "My Awesome Model Router Configuration",
+  "description": "Configuration schema for the my-awesome-model-router OpenCode plugin",
+  "type": "object",
+  "required": ["version", "name", "modelProviders", "agents", "categories"],
+  "additionalProperties": false,
+
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Config version (semver)"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Plugin name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Plugin description"
+    },
+    "modelProviders": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Map of model aliases to provider/model-id strings"
+    },
+    "agents": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/definitions/agent"
+      },
+      "description": "Agent definitions with model and skill mappings"
+    },
+    "categories": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/definitions/category"
+      },
+      "description": "Task category definitions"
+    },
+    "fallbackChains": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
+      },
+      "description": "Fallback model chains per agent type"
+    },
+    "categoryKeywords": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1
+      },
+      "description": "Keywords for matching task descriptions to categories"
+    }
+  },
+
+  "definitions": {
+    "agent": {
+      "type": "object",
+      "required": ["model", "skills", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Model alias (must exist in modelProviders)"
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "Skill names this agent provides"
+        },
+        "description": {
+          "type": "string",
+          "description": "Agent description"
+        }
+      }
+    },
+    "category": {
+      "type": "object",
+      "required": ["model", "description", "agents"],
+      "additionalProperties": false,
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Model alias for this category"
+        },
+        "description": {
+          "type": "string",
+          "description": "Category description"
+        },
+        "agents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "Agent names in this category"
+        }
+      }
+    },
+    "taskType": {
+      "type": "object",
+      "required": ["category", "model"],
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "type": "string",
+          "description": "Category this task type belongs to"
+        },
+        "model": {
+          "type": "string",
+          "description": "Model alias for this task type"
+        }
+      }
+    },
+    "selectionRule": {
+      "type": "object",
+      "required": ["condition", "model", "priority"],
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "type": "string",
+          "description": "Condition expression (e.g., 'task contains frontend')"
+        },
+        "model": {
+          "type": "string",
+          "description": "Model alias to use when condition matches"
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Rule priority (higher = checked first)"
+        }
+      }
+    }
+  }
+}

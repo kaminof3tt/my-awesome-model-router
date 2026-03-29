@@ -4,49 +4,55 @@ Guide for AI agents working in this repository.
 
 ## Project Overview
 
-**my-awesome-model-router** is an OpenCode plugin providing role-based model routing for AI agents. It maps development tasks to specialized models optimized for domains including frontend, backend, architecture, testing, QA, debugging, documentation, refactoring, and database work.
+**my-awesome-model-router** is an OpenCode plugin providing role-based model routing. It maps development tasks to specialized models (Kimi-K2.5, GLM-5, DeepSeek-V3.2, MiniMax-M2.7) optimized for domains: frontend, backend, architecture, testing, QA, debugging, documentation, refactoring, and database.
 
 ## Repository Structure
 
 ```
 my-awesome-model-router/
-├── index.js                    # Plugin entry point (CommonJS)
-├── my-awesome-model-router-config.json       # Model routing configuration
-├── skills/                     # Skill definitions
-│   ├── frontend/SKILL.md       # UI/UX, components, styling
-│   ├── architect/SKILL.md      # System design, architecture
-│   ├── backend/SKILL.md        # API, business logic, integrations
-│   ├── tester/SKILL.md         # Testing strategy, automation
-│   ├── qa/SKILL.md             # Code review, quality metrics
-│   ├── debugging/SKILL.md      # Debugging, root cause analysis
-│   ├── documentation/SKILL.md  # Technical documentation
-│   ├── refactoring/SKILL.md    # Code refactoring, tech debt
-│   └── database/SKILL.md       # DB design, query optimization
-├── package.json
-├── README.md
-└── LICENSE                     # MIT
+├── index.js                    # Entry point (re-exports src/)
+├── src/                        # Modular implementation
+│   ├── index.js               # Main module with plugin API
+│   ├── config/                # Config loading, validation, hot-reload
+│   ├── skills/                # Skill discovery and YAML parsing
+│   ├── routing/               # Model routing logic
+│   ├── plugin/                # Plugin system and hooks
+│   └── cache/                 # TTL-based cache manager
+├── config.json                # Model routing configuration
+├── skills/<name>/SKILL.md     # Skill definitions (auto-discovered)
+├── tests/                     # Jest test files
+├── .eslintrc                  # ESLint config
+├── .prettierrc                # Prettier config
+└── jest.config.js             # Jest configuration
 ```
 
 ## Build / Lint / Test Commands
 
 ```bash
-# No build step required - pure JavaScript
-npm test        # Placeholder (exits with error)
+npm test                      # Run all tests with coverage
+npm test -- modular.test.js   # Run specific test file
+npm test -- --coverage        # Run with coverage report (60% branches, 70% lines/functions)
+npm test -- --watch           # Watch mode
+npm run test:ci               # CI mode (coverage, max 2 workers)
 ```
 
-**Status:** No linter, formatter, or test framework configured. When adding tests, use the user-specified framework or propose one.
+**Lint:** ESLint config present but no `lint` script. Run manually: `npx eslint src/ tests/`
 
 ## Code Style Guidelines
 
+### Formatting (from `.prettierrc` / `.eslintrc`)
+- 2-space indentation, no tabs
+- Single quotes, semicolons required
+- Trailing commas in multiline (all)
+- 100 char print width
+- LF line endings
+- No trailing spaces
+- Object curly spacing: `{ key: value }`
+- No spaces before function parens: `function(args)`
+
 ### Module System
 - **CommonJS** only (`require` / `module.exports`)
-- No ES modules (`import` / `export`) - this is a Node.js plugin
-
-### Formatting
-- 2-space indentation
-- Single quotes for strings
-- Semicolons required
-- Trailing commas in multi-line objects/arrays
+- No ES modules (`import` / `export`)
 
 ### Naming Conventions
 - **Files**: `kebab-case.js`
@@ -57,7 +63,6 @@ npm test        # Placeholder (exits with error)
 ### Comments & Documentation
 - Use JSDoc for module and function documentation
 - Inline comments only for non-obvious logic
-- Keep comments concise - code should be self-explanatory
 
 ```javascript
 /**
@@ -72,34 +77,28 @@ const getModelForAgent = (agentType) => {
 
 ### Error Handling
 - Wrap external calls (file I/O, config loading) with try/catch
-- Log errors with `console.error`
+- Log errors with `console.error` (allowed by eslint: `no-console: off`)
 - Return `null` or sensible defaults on failure
 - **Never throw from plugin entry points**
 
-```javascript
-try {
-  const config = require('./my-awesome-model-router-config.json');
-  return config;
-} catch (error) {
-  console.error('Failed to load config:', error);
-  return null;
-}
-```
-
 ### Import Conventions
-- Group imports: Node.js builtins first, local modules second
+- Node.js builtins first, then third-party, then local modules
 - Use relative paths (`./`, `../`)
-- No dynamic imports - use `require()`
+- No dynamic imports — use `require()`
 
-```javascript
-const fs = require('fs');
-const path = require('path');
-const config = require('./my-awesome-model-router-config.json');
-```
+## Commit Message Format
+
+Follow conventional commits:
+- `feat:` — new feature
+- `fix:` — bug fix
+- `docs:` — documentation
+- `refactor:` — code refactoring
+- `test:` — add/modify tests
+- `chore:` — build/tooling changes
 
 ## Skill Development
 
-When creating or modifying skills:
+When creating/modifying skills:
 
 1. **Location**: `skills/<skill-name>/SKILL.md`
 2. **Required frontmatter**:
@@ -109,34 +108,34 @@ When creating or modifying skills:
    description: Use when [trigger condition]
    ---
    ```
-3. **description MUST start with "Use when"** - this is how OpenCode matches skills
+3. **description MUST start with "Use when"** — this is how OpenCode matches skills
 4. **Required sections**: Overview, When to Use, Core Responsibilities, Model Configuration, Common Patterns
 
-## Model Routing Logic
+## Model Routing
 
-| Task Category | Model | Use Case |
-|--------------|-------|----------|
-| `frontend-architecture` | Kimi-K2.5 | UI components, system design, refactoring |
-| `requirement-implementation` | GLM-5 | Feature development, business logic, database |
-| `bug-fix` | DeepSeek-V3.2 | Debugging, error analysis |
-| `debugging` | DeepSeek-V3.2 | Root cause analysis, problem diagnosis |
-| `documentation` | MiniMax-M2.7 | Technical docs, API documentation |
-| `refactoring` | Kimi-K2.5 | Code refactoring, technical debt |
-| `database` | GLM-5 | Database design, query optimization |
-| `low-difficulty` | MiniMax-M2.7 | Simple tasks |
+| Category | Model | Use Case |
+|----------|-------|----------|
+| `frontend-architecture` | Kimi-K2.5 | UI components, system design |
+| `requirement-implementation` | GLM-5 | Feature development, business logic |
+| `bug-fix` / `debugging` | DeepSeek-V3.2 | Debugging, root cause analysis |
+| `documentation` | MiniMax-M2.7 | Technical docs |
+| `refactoring` | Kimi-K2.5 | Code refactoring, tech debt |
+| `database` | GLM-5 | DB design, query optimization |
 | `fallback` | MiniMax-M2.7 | Default for unspecified tasks |
 
 ## Key Constraints
 
-- **No TypeScript** - pure JavaScript project
-- **No bundler** - files loaded directly by OpenCode
-- **Plugin API** - `index.js` exports `init`, `getSkills`, `getModelConfig`
-- **Configuration-driven** - model routing defined in `my-awesome-model-router-config.json`, not hardcoded
+- **No TypeScript** — pure JavaScript
+- **No bundler** — files loaded directly by OpenCode
+- **Plugin API** — exports `init`, `getSkills`, `getModelConfig`, async variants, and `registerPlugin`
+- **Configuration-driven** — routing defined in `config.json`, not hardcoded
+- **Skills auto-discovered** — scans `skills/` directory
+- **Plugin system** — extensible hooks: `beforeConfigLoad`, `afterModelRouting`, etc.
 
 ## Prohibited Actions
 
-- Adding TypeScript or transpilation tools - keep it pure JS
-- Adding build tools without request
-- Hardcoding model names in `index.js` - use config file
+- Adding TypeScript or transpilation tools
+- Hardcoding model names in source — use `config.json`
 - Committing `node_modules/` or lock files
-- Removing `$schema` fields from JSON config without reason
+- Removing `$schema` fields from JSON config
+- Using ES modules (`import`/`export`)
