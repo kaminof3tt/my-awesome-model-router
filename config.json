@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "name": "my-awesome-model-router",
   "description": "Custom skills plugin with role-based model selection",
-  
+
   "modelProviders": {
     "k2.5": "volcengine-plan/kimi-k2.5",
-    "glm5": "volcengine-plan/glm-5",
-    "deepseekv3.2": "baiduqianfancodingplan/deepseek-v3.2",
+    "glm5": "volcengine-plan/glm-4.7",
+    "deepseekv3.2": "volcengine-plan/deepseek-v3.2",
     "m2.7": "minimax-cn-coding-plan/MiniMax-M2.7"
   },
-  
+
   "agents": {
     "frontend": {
       "model": "k2.5",
@@ -58,7 +58,7 @@
       "description": "Database design and optimization specialist"
     }
   },
-  
+
   "categories": {
     "frontend-architecture": {
       "model": "k2.5",
@@ -106,7 +106,7 @@
       "agents": ["frontend", "backend", "tester", "qa"]
     }
   },
-  
+
 
 
   "fallbackChains": {
