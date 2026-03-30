@@ -16,7 +16,7 @@ const HookTypes = {
   BEFORE_MODEL_ROUTING: 'beforeModelRouting',
   AFTER_MODEL_ROUTING: 'afterModelRouting',
   ON_CONFIG_CHANGE: 'onConfigChange',
-  ON_SKILLS_CHANGE: 'onSkillsChange'
+  ON_SKILLS_CHANGE: 'onSkillsChange',
 };
 
 /**
@@ -27,18 +27,18 @@ class PluginAPI extends EventEmitter {
     super();
     this.plugins = new Map();
     this.hooks = new Map();
-    
+
     // Initialize hook registry
     for (const hookType of Object.values(HookTypes)) {
       this.hooks.set(hookType, []);
     }
-    
+
     // Internal event emitter for hooks
     this.on('hook', (hookType, data) => {
       this.executeHooks(hookType, data);
     });
   }
-  
+
   /**
    * Register a plugin
    * @param {string} name - Plugin name
@@ -50,26 +50,26 @@ class PluginAPI extends EventEmitter {
       console.warn(`[my-awesome-model-router] Plugin "${name}" is already registered`);
       return false;
     }
-    
+
     try {
       // Initialize plugin if it has an init method
       if (typeof plugin.init === 'function') {
         plugin.init(this, options);
       }
-      
+
       // Register plugin hooks
       if (plugin.hooks) {
         for (const [hookType, handler] of Object.entries(plugin.hooks)) {
           this.registerHook(hookType, handler);
         }
       }
-      
+
       this.plugins.set(name, {
         instance: plugin,
         options,
-        registeredAt: Date.now()
+        registeredAt: Date.now(),
       });
-      
+
       console.log(`[my-awesome-model-router] Plugin "${name}" registered successfully`);
       return true;
     } catch (error) {
@@ -77,7 +77,7 @@ class PluginAPI extends EventEmitter {
       return false;
     }
   }
-  
+
   /**
    * Unregister a plugin
    * @param {string} name - Plugin name
@@ -86,9 +86,9 @@ class PluginAPI extends EventEmitter {
     if (!this.plugins.has(name)) {
       return false;
     }
-    
+
     const plugin = this.plugins.get(name);
-    
+
     // Cleanup plugin if it has a cleanup method
     if (typeof plugin.instance.cleanup === 'function') {
       try {
@@ -97,12 +97,12 @@ class PluginAPI extends EventEmitter {
         console.error(`[my-awesome-model-router] Error during plugin "${name}" cleanup:`, error.message);
       }
     }
-    
+
     this.plugins.delete(name);
     console.log(`[my-awesome-model-router] Plugin "${name}" unregistered`);
     return true;
   }
-  
+
   /**
    * Register a hook handler
    * @param {string} hookType - Hook type
@@ -114,23 +114,26 @@ class PluginAPI extends EventEmitter {
       console.warn(`[my-awesome-model-router] Unknown hook type: ${hookType}`);
       return false;
     }
-    
+
     const hookEntry = {
       handler,
       priority,
-      registeredAt: Date.now()
+      registeredAt: Date.now(),
     };
-    
+
     const hooks = this.hooks.get(hookType);
     hooks.push(hookEntry);
-    
+
     // Sort by priority (descending)
     hooks.sort((a, b) => b.priority - a.priority);
-    
-    console.log(`[my-awesome-model-router] Hook "${hookType}" registered with priority ${priority}`);
+
+    // Only log in debug mode to reduce noise
+    if (process.env.DEBUG) {
+      console.log(`[my-awesome-model-router] Hook "${hookType}" registered with priority ${priority}`);
+    }
     return true;
   }
-  
+
   /**
    * Unregister a hook handler
    * @param {string} hookType - Hook type
@@ -140,19 +143,19 @@ class PluginAPI extends EventEmitter {
     if (!this.hooks.has(hookType)) {
       return false;
     }
-    
+
     const hooks = this.hooks.get(hookType);
     const initialLength = hooks.length;
     const filteredHooks = hooks.filter(hook => hook.handler !== handler);
-    
+
     if (filteredHooks.length === initialLength) {
       return false; // Handler not found
     }
-    
+
     this.hooks.set(hookType, filteredHooks);
     return true;
   }
-  
+
   /**
    * Execute hooks for a specific hook type
    * @param {string} hookType - Hook type
@@ -163,17 +166,17 @@ class PluginAPI extends EventEmitter {
     if (!this.hooks.has(hookType)) {
       return data;
     }
-    
+
     const hooks = this.hooks.get(hookType);
     let result = { ...data };
-    
+
     for (const hook of hooks) {
       try {
         // Execute hook with context
         const hookResult = await Promise.resolve(
-          hook.handler.call(this, result, { hookType, hook })
+          hook.handler.call(this, result, { hookType, hook }),
         );
-        
+
         // Update result if hook returns something
         if (hookResult !== undefined) {
           result = { ...result, ...hookResult };
@@ -183,10 +186,10 @@ class PluginAPI extends EventEmitter {
         // Continue with other hooks even if one fails
       }
     }
-    
+
     return result;
   }
-  
+
   /**
    * Trigger a hook
    * @param {string} hookType - Hook type
@@ -196,7 +199,7 @@ class PluginAPI extends EventEmitter {
   async triggerHook(hookType, data = {}) {
     return this.executeHooks(hookType, data);
   }
-  
+
   /**
    * Get registered plugins
    * @returns {object} Map of registered plugins
@@ -207,12 +210,12 @@ class PluginAPI extends EventEmitter {
       plugins[name] = {
         name,
         options: info.options,
-        registeredAt: info.registeredAt
+        registeredAt: info.registeredAt,
       };
     }
     return plugins;
   }
-  
+
   /**
    * Get registered hooks
    * @returns {object} Map of registered hooks
@@ -222,12 +225,12 @@ class PluginAPI extends EventEmitter {
     for (const [hookType, hookList] of this.hooks) {
       hooks[hookType] = hookList.map(hook => ({
         priority: hook.priority,
-        registeredAt: hook.registeredAt
+        registeredAt: hook.registeredAt,
       }));
     }
     return hooks;
   }
-  
+
   /**
    * Clear all plugins and hooks
    */
@@ -236,12 +239,12 @@ class PluginAPI extends EventEmitter {
     for (const name of this.plugins.keys()) {
       this.unregisterPlugin(name);
     }
-    
+
     // Clear all hooks
     for (const hookType of this.hooks.keys()) {
       this.hooks.set(hookType, []);
     }
-    
+
     console.log('[my-awesome-model-router] Plugin API cleared');
   }
 }
@@ -254,73 +257,73 @@ class PluginAPI extends EventEmitter {
 const LoggingPlugin = {
   name: 'logging',
   description: 'Adds logging for all hook events',
-  
+
   init(api, options) {
     this.options = options;
     this.logLevel = options.logLevel || 'info';
-    
+
     // Register hooks for logging
     for (const hookType of Object.values(HookTypes)) {
       api.registerHook(hookType, this.logHook.bind(this), -100); // Low priority
     }
   },
-  
+
   logHook(data, context) {
     if (this.logLevel === 'debug') {
       console.log(`[my-awesome-model-router:${context.hookType}]`, data);
     }
     return data; // Pass through unchanged
   },
-  
+
   cleanup() {
     console.log('[my-awesome-model-router] Logging plugin cleaned up');
-  }
+  },
 };
 
 // Example plugin: Stats plugin
 const StatsPlugin = {
   name: 'stats',
   description: 'Collects routing statistics',
-  
+
   init(api, options) {
     this.stats = {
       routingDecisions: 0,
       configLoads: 0,
       skillDiscoveries: 0,
-      startTime: Date.now()
+      startTime: Date.now(),
     };
-    
+
     // Register hooks for stats collection
     api.registerHook(HookTypes.AFTER_MODEL_ROUTING, this.recordRouting.bind(this));
     api.registerHook(HookTypes.AFTER_CONFIG_LOAD, this.recordConfigLoad.bind(this));
     api.registerHook(HookTypes.AFTER_SKILL_DISCOVERY, this.recordSkillDiscovery.bind(this));
   },
-  
+
   recordRouting(data) {
     this.stats.routingDecisions++;
     return data;
   },
-  
+
   recordConfigLoad(data) {
     this.stats.configLoads++;
     return data;
   },
-  
+
   recordSkillDiscovery(data) {
     this.stats.skillDiscoveries++;
     return data;
   },
-  
+
   getStats() {
     return {
       ...this.stats,
-      uptime: Date.now() - this.stats.startTime
+      uptime: Date.now() - this.stats.startTime,
     };
   },
-  
+
   cleanup() {
     console.log('[my-awesome-model-router] Stats plugin cleaned up');
-  }
+  },
 };
 
 module.exports = {
@@ -328,6 +331,6 @@ module.exports = {
   HookTypes,
   builtInPlugins: {
     LoggingPlugin,
-    StatsPlugin
-  }
+    StatsPlugin,
+  },
 };

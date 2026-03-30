@@ -35,16 +35,16 @@ function parseFrontmatter(content) {
 class SkillDiscovery {
   constructor(skillsDir) {
     this.skillsDir = skillsDir;
-    
+
     // Cache state
     this.discoveredSkills = null;
     this.cachedSkillNames = null;
     this.cachedSkillsTime = 0;
-    
+
     // TTL constants
     this.SKILLS_CACHE_TTL = 10 * 60 * 1000; // 10 minutes
   }
-  
+
   /**
    * Discover skills synchronously
    * @returns {string[]} Array of discovered skill names
@@ -55,21 +55,21 @@ class SkillDiscovery {
 
     try {
       const subdirs = fs.readdirSync(skillsDir);
-      
+
       for (const subdir of subdirs) {
         // 安全验证：只允许字母、数字、连字符、下划线
         if (!/^[\w-]+$/.test(subdir)) {
           console.warn(`[my-awesome-model-router] Skipping invalid directory name: ${subdir}`);
           continue;
         }
-        
+
         const skillPath = path.join(skillsDir, subdir, 'SKILL.md');
-        
+
         if (fs.existsSync(skillPath)) {
           try {
             const content = fs.readFileSync(skillPath, 'utf8');
             const frontmatter = parseFrontmatter(content);
-            
+
             if (!frontmatter.name) {
               console.warn(`[my-awesome-model-router] Warning: SKILL.md in ${subdir} is missing "name" field`);
             }
@@ -78,7 +78,7 @@ class SkillDiscovery {
             } else if (!frontmatter.description.startsWith('Use when')) {
               console.warn(`[my-awesome-model-router] Warning: Skill "${frontmatter.name}" description should start with "Use when"`);
             }
-            
+
             if (frontmatter.name) {
               skills.push(frontmatter.name);
             }
@@ -90,10 +90,10 @@ class SkillDiscovery {
     } catch (err) {
       console.error('[my-awesome-model-router] Failed to discover skills:', err.message);
     }
-    
+
     return skills;
   }
-  
+
   /**
    * Discover skills asynchronously
    * @returns {Promise<string[]>} Promise that resolves to array of discovered skill names
@@ -104,22 +104,22 @@ class SkillDiscovery {
 
     try {
       const subdirs = await fs.promises.readdir(skillsDir);
-      
+
       // 并行读取所有技能文件以提高性能
       const skillPromises = subdirs
         .filter(subdir => /^[\w-]+$/.test(subdir)) // 安全过滤
         .map(async subdir => {
           const skillPath = path.join(skillsDir, subdir, 'SKILL.md');
-          
+
           try {
             const stats = await fs.promises.stat(skillPath);
             if (!stats.isFile()) {
               return null;
             }
-            
+
             const content = await fs.promises.readFile(skillPath, 'utf8');
             const frontmatter = parseFrontmatter(content);
-            
+
             if (!frontmatter.name) {
               console.warn(`[my-awesome-model-router] Warning: SKILL.md in ${subdir} is missing "name" field`);
               return null;
@@ -129,24 +129,24 @@ class SkillDiscovery {
             } else if (!frontmatter.description.startsWith('Use when')) {
               console.warn(`[my-awesome-model-router] Warning: Skill "${frontmatter.name}" description should start with "Use when"`);
             }
-            
+
             return frontmatter.name;
           } catch (err) {
             console.warn(`[my-awesome-model-router] Warning: Failed to read ${skillPath}:`, err.message);
             return null;
           }
         });
-      
+
       const skillResults = await Promise.all(skillPromises);
       skills.push(...skillResults.filter(Boolean));
-      
+
     } catch (err) {
       console.error('[my-awesome-model-router] Failed to discover skills:', err.message);
     }
-    
+
     return skills;
   }
-  
+
   /**
    * Get skills synchronously with caching
    * @returns {string[]} Array of skill names
@@ -160,7 +160,7 @@ class SkillDiscovery {
     }
     return this.discoveredSkills;
   }
-  
+
   /**
    * Get skills asynchronously with caching
    * @returns {Promise<string[]>} Promise resolving to array of skill names
@@ -181,7 +181,7 @@ class SkillDiscovery {
     }
     return this.discoveredSkills;
   }
-  
+
   /**
    * Clear skills cache
    */
@@ -190,7 +190,7 @@ class SkillDiscovery {
     this.cachedSkillNames = null;
     this.cachedSkillsTime = 0;
   }
-  
+
   /**
    * Get cache statistics
    * @returns {object} Cache statistics
@@ -201,7 +201,7 @@ class SkillDiscovery {
       cached: this.discoveredSkills !== null,
       skillCount: this.discoveredSkills ? this.discoveredSkills.length : 0,
       age: this.cachedSkillsTime ? now - this.cachedSkillsTime : null,
-      ttl: this.cachedSkillsTime ? (this.cachedSkillsTime + this.SKILLS_CACHE_TTL) - now : null
+      ttl: this.cachedSkillsTime ? (this.cachedSkillsTime + this.SKILLS_CACHE_TTL) - now : null,
     };
   }
 }

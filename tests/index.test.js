@@ -11,7 +11,7 @@ name: test-skill
 description: Use when testing
 ---
 # Content`;
-    
+
     const moduleText = fs.readFileSync(path.join(__dirname, '../index.js'), 'utf8');
     // Since parseFrontmatter is not exported, we test through getSkills which uses it
     // This is a limitation of CommonJS internal functions
@@ -24,7 +24,7 @@ name: test-skill
 description: Use when: x AND y
 ---
 # Content`;
-    
+
     // The content should be parseable
     expect(content).toContain('description: Use when: x AND y');
   });
@@ -33,13 +33,13 @@ description: Use when: x AND y
     const content = `---
 ---
 # Content`;
-    
+
     expect(content).toBeTruthy();
   });
 
   test('should handle no frontmatter', () => {
-    const content = `# Content without frontmatter`;
-    
+    const content = '# Content without frontmatter';
+
     expect(content).toBeTruthy();
   });
 
@@ -50,18 +50,18 @@ description: Use when testing
 with multiple lines
 ---
 # Content`;
-    
+
     expect(content).toContain('name: test-skill');
   });
 });
 
 describe('my-awesome-model-router', () => {
-  
+
   describe('pluginInfo', () => {
     test('should have correct name', () => {
       expect(plugin.pluginInfo.name).toBe('my-awesome-model-router');
     });
-    
+
     test('should have version', () => {
       expect(plugin.pluginInfo.version).toBeDefined();
     });
@@ -72,12 +72,12 @@ describe('my-awesome-model-router', () => {
       const skills = plugin.getSkills();
       expect(Array.isArray(skills)).toBe(true);
     });
-    
+
     test('should discover 9 skills', () => {
       const skills = plugin.getSkills();
       expect(skills.length).toBe(9);
     });
-    
+
     test('should include known skill names', () => {
       const skills = plugin.getSkills();
       expect(skills).toContain('frontend-developer');
@@ -93,24 +93,24 @@ describe('my-awesome-model-router', () => {
       expect(config).toBeDefined();
       expect(typeof config).toBe('object');
     });
-    
+
     test('should have modelProviders', () => {
       const config = plugin.getModelConfig();
       expect(config.modelProviders).toBeDefined();
       expect(Object.keys(config.modelProviders).length).toBeGreaterThan(0);
     });
-    
+
     test('should have agents', () => {
       const config = plugin.getModelConfig();
       expect(config.agents).toBeDefined();
     });
-    
+
     test('should have fallbackChains', () => {
       const config = plugin.getModelConfig();
       expect(config.fallbackChains).toBeDefined();
       expect(config.fallbackChains.default).toBeDefined();
     });
-    
+
     test('should return cached config on second call', () => {
       const config1 = plugin.getModelConfig();
       const config2 = plugin.getModelConfig();
@@ -124,32 +124,32 @@ describe('my-awesome-model-router', () => {
       expect(model).toBeDefined();
       expect(typeof model).toBe('string');
     });
-    
+
     test('should return fallback chain first entry for frontend', () => {
       const model = plugin.getModelWithFallback('frontend');
       expect(model).toBe('k2.5');
     });
-    
+
     test('should return fallback chain first entry for backend', () => {
       const model = plugin.getModelWithFallback('backend');
       expect(model).toBe('glm5');
     });
-    
+
     test('should return default fallback for unknown agent', () => {
       const model = plugin.getModelWithFallback('unknown-agent');
       expect(model).toBe('m2.7');
     });
-    
+
     test('should match category by task description', () => {
       const model = plugin.getModelWithFallback(null, 'implement user authentication');
       expect(model).toBe('glm5'); // requirement-implementation category
     });
-    
+
     test('should match debug category by task description', () => {
       const model = plugin.getModelWithFallback(null, 'debug memory leak');
       expect(model).toBe('deepseekv3.2'); // debugging category
     });
-    
+
     test('should return fallback category for unmatched task', () => {
       const model = plugin.getModelWithFallback(null, 'do something random');
       expect(model).toBe('m2.7'); // fallback category
@@ -157,14 +157,14 @@ describe('my-awesome-model-router', () => {
   });
 
   describe('init', () => {
-    test('should return plugin info on init', () => {
-      const result = plugin.init();
+    test('should return plugin info on init', async() => {
+      const result = await plugin.init();
       expect(result.name).toBe('my-awesome-model-router');
       expect(result.version).toBeDefined();
     });
 
-    test('should preload skills on init', () => {
-      plugin.init();
+    test('should preload skills on init', async() => {
+      await plugin.init();
       const skills = plugin.getSkills();
       expect(skills).toBeDefined();
       expect(skills.length).toBeGreaterThan(0);

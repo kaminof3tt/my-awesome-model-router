@@ -13,20 +13,20 @@ class ConfigLoader {
   constructor(configPath, skillNames) {
     this.configPath = configPath;
     this.skillNames = skillNames || [];
-    
+
     // Cache state
     this.cachedConfig = null;
     this.cachedMtime = null;
     this.cachedConfigTime = 0;
-    
+
     // File watcher
     this.configWatcher = null;
     this.isWatching = false;
-    
+
     // TTL constants
     this.CONFIG_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
   }
-  
+
   /**
    * Start config file watcher for hot-reload
    */
@@ -34,7 +34,7 @@ class ConfigLoader {
     if (this.isWatching) {
       return;
     }
-    
+
     try {
       this.configWatcher = fs.watch(this.configPath, { persistent: false }, (eventType, filename) => {
         if (eventType === 'change' && filename === 'config.json') {
@@ -44,19 +44,19 @@ class ConfigLoader {
           this.cachedConfigTime = 0;
         }
       });
-      
+
       this.configWatcher.on('error', (err) => {
         console.error('[my-awesome-model-router] Config watcher error:', err.message);
         this.isWatching = false;
       });
-      
+
       this.isWatching = true;
       console.log('[my-awesome-model-router] Config watcher started');
     } catch (err) {
       console.error('[my-awesome-model-router] Failed to start config watcher:', err.message);
     }
   }
-  
+
   /**
    * Stop config file watcher
    */
@@ -68,7 +68,7 @@ class ConfigLoader {
       console.log('[my-awesome-model-router] Config watcher stopped');
     }
   }
-  
+
   /**
    * Validate configuration
    * @param {object} config - Configuration object to validate
@@ -76,7 +76,7 @@ class ConfigLoader {
    */
   validateConfig(config) {
     const warnings = [];
-    
+
     // Check required fields
     const requiredFields = ['version', 'name', 'modelProviders', 'agents'];
     for (const field of requiredFields) {
@@ -84,12 +84,12 @@ class ConfigLoader {
         warnings.push(`${field} is missing`);
       }
     }
-    
+
     // Check modelProviders exists and is non-empty object
     if (!config.modelProviders || typeof config.modelProviders !== 'object' || Object.keys(config.modelProviders).length === 0) {
       warnings.push('modelProviders is missing, empty, or not an object');
     }
-    
+
     // Check agents exists
     if (!config.agents || typeof config.agents !== 'object') {
       warnings.push('agents is missing or not an object');
@@ -101,7 +101,7 @@ class ConfigLoader {
         } else if (config.modelProviders && !config.modelProviders[agent.model]) {
           warnings.push(`Agent "${agentName}" references unknown model "${agent.model}"`);
         }
-        
+
         // Check agent's skills array items exist as skill names
         if (agent.skills && Array.isArray(agent.skills)) {
           for (const skill of agent.skills) {
@@ -112,12 +112,12 @@ class ConfigLoader {
         }
       }
     }
-    
+
     // Check categories exist if categoryKeywords exist
     if (config.categoryKeywords && !config.categories) {
       warnings.push('categoryKeywords defined but categories missing');
     }
-    
+
     // Check fallbackChains references valid model providers
     if (config.fallbackChains && config.modelProviders) {
       for (const [chainName, chain] of Object.entries(config.fallbackChains)) {
@@ -130,15 +130,15 @@ class ConfigLoader {
         }
       }
     }
-    
+
     // Log all warnings
     for (const warning of warnings) {
       console.warn(`[my-awesome-model-router] Config validation: ${warning}`);
     }
-    
+
     return warnings;
   }
-  
+
   /**
    * Load configuration synchronously
    * @returns {object|null} Configuration object or null on error
@@ -149,30 +149,30 @@ class ConfigLoader {
       if (!this.isWatching) {
         this.startWatcher();
       }
-      
+
       const now = Date.now();
-      
+
       // If config is not cached or TTL expired, reload it
       if (this.cachedConfig === null || (now - this.cachedConfigTime) > this.CONFIG_CACHE_TTL) {
         const fileContent = fs.readFileSync(this.configPath, 'utf8');
         this.cachedConfig = JSON.parse(fileContent);
-        
+
         // Get current mtime for fallback
         const stats = fs.statSync(this.configPath);
         this.cachedMtime = stats.mtime.getTime();
         this.cachedConfigTime = now;
-        
+
         // Validate config
         this.validateConfig(this.cachedConfig);
       }
-      
+
       return this.cachedConfig;
     } catch (error) {
       console.error('[my-awesome-model-router] Error loading model config:', error.message);
       return this.cachedConfig || null;
     }
   }
-  
+
   /**
    * Load configuration asynchronously
    * @returns {Promise<object|null>} Promise resolving to config object or null
@@ -183,30 +183,30 @@ class ConfigLoader {
       if (!this.isWatching) {
         this.startWatcher();
       }
-      
+
       const now = Date.now();
-      
+
       // If config is not cached or TTL expired, reload it
       if (this.cachedConfig === null || (now - this.cachedConfigTime) > this.CONFIG_CACHE_TTL) {
         const fileContent = await fs.promises.readFile(this.configPath, 'utf8');
         this.cachedConfig = JSON.parse(fileContent);
-        
+
         // Get current mtime for fallback
         const stats = await fs.promises.stat(this.configPath);
         this.cachedMtime = stats.mtime.getTime();
         this.cachedConfigTime = now;
-        
+
         // Validate config
         this.validateConfig(this.cachedConfig);
       }
-      
+
       return this.cachedConfig;
     } catch (error) {
       console.error('[my-awesome-model-router] Error loading model config:', error.message);
       return this.cachedConfig || null;
     }
   }
-  
+
   /**
    * Clear config cache
    */
@@ -215,7 +215,7 @@ class ConfigLoader {
     this.cachedMtime = null;
     this.cachedConfigTime = 0;
   }
-  
+
   /**
    * Get cache statistics
    * @returns {object} Cache statistics
@@ -226,7 +226,7 @@ class ConfigLoader {
       cached: this.cachedConfig !== null,
       age: this.cachedConfigTime ? now - this.cachedConfigTime : null,
       ttl: this.cachedConfigTime ? (this.cachedConfigTime + this.CONFIG_CACHE_TTL) - now : null,
-      watching: this.isWatching
+      watching: this.isWatching,
     };
   }
 }
