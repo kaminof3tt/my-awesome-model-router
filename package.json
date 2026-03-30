@@ -36,6 +36,7 @@
     "supportedVersions": ">=1.0.0"
   },
   "files": [
+    "src/",
     "skills/",
     "config.json",
     "index.js",
