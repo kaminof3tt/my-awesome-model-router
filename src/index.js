@@ -31,15 +31,19 @@ let cacheManager = null;
 
 // Initialize module instances
 function initModules() {
-  if (!configLoader) {
-    configLoader = new ConfigLoader(
-      path.join(__dirname, '..', 'config.json'),
-    );
-  }
-
+  // Initialize skillDiscovery first to get skill names for config validation
   if (!skillDiscovery) {
     skillDiscovery = new SkillDiscovery(
       path.join(__dirname, '..', 'skills'),
+    );
+  }
+
+  if (!configLoader) {
+    // Get skill names for config validation
+    const skillNames = skillDiscovery.getSkillsSync();
+    configLoader = new ConfigLoader(
+      path.join(__dirname, '..', 'config.json'),
+      skillNames,
     );
   }
 
